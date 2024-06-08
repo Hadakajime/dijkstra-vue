@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"restoreTerminals.artificialDelayMilliseconds": 5000,
+		"restoreTerminals.terminals": [
+			{
+				"splitTerminals": [
+					{
+						"name": "cmd",
+						"commands": [
+							"sleep 3",
+							"cd ~/repos/dijkstra-vue",
+							"yarn dev"
+						]
+					},
+					{
+						"name": "Run1",
+						"commands": [
+							"sleep 3",
+							"cd ~/repos/dijkstra-vue"
+						]
+					}
+				]
+			}
+		],
+	}
+}
