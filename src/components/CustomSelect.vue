@@ -1,6 +1,14 @@
-<template></template>
+<template>
+	<div>
+		<label :for="id" class="block text-color-body text-sm mb-[8px]">
+			{{ label }}
+		</label>
+		<v-select v-bind="$attrs" v-model="value" :id="id" :name="id" :options="options" :placeholder="placeholder" :disabled="disabled" :input="onChange"></v-select>
+	</div>
+</template>
 
 <script lang="ts">
+import "vue-select/dist/vue-select.css";
 import { defineComponent, type PropType } from "vue";
 import type { OptionType } from "@/types";
 
@@ -19,6 +27,26 @@ export default defineComponent({
 	props: {
 		options: {
 			type: Array as PropType<CustomSelectProps["options"]>,
+		},
+		value: {
+			type: Object as PropType<CustomSelectProps["value"]>,
+			default: null,
+		},
+		placeholder: {
+			type: String,
+			default: "",
+		},
+		label: {
+			type: String,
+			default: "",
+		},
+		disabled: Boolean,
+		id: {
+			type: String,
+			default: "",
+		},
+		onChange: {
+			type: Function as PropType<CustomSelectProps["onChange"]>,
 		},
 	},
 });

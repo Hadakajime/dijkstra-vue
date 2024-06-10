@@ -17,9 +17,7 @@ export type ButtonProps = {
 	disabled?: boolean;
 	loading?: boolean;
 	onClick?: () => void;
-	className?: string;
 	hasIcon?: boolean;
-	children: string;
 	type?: "button" | "submit" | "reset";
 };
 
@@ -33,26 +31,13 @@ export default defineComponent({
 			type: String as PropType<ButtonProps["appearance"]>,
 			default: "solid",
 		},
-		disabled: {
-			type: Boolean,
-			default: false,
-		},
-		loading: {
-			type: Boolean,
-			default: false,
-		},
+		disabled: Boolean,
+		loading: Boolean,
 		onClick: {
 			type: Function as PropType<ButtonProps["onClick"]>,
 			default: () => undefined,
 		},
-		hasIcon: {
-			type: Boolean,
-			default: false,
-		},
-		children: {
-			type: String,
-			default: "",
-		},
+		hasIcon: Boolean,
 		type: {
 			type: String as PropType<ButtonProps["type"]>,
 			default: "button",

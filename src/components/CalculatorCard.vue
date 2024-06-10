@@ -81,7 +81,6 @@ export default defineComponent({
 	props: {
 		initMode: {
 			type: String as PropType<CalculatorCardProps["initMode"]>,
-
 			default: "input",
 		},
 	},
