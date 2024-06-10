@@ -1,7 +1,36 @@
 <template>
-	<div>
-		<p>{{ title }}</p>
-		<p>{{ caption }}</p>
+	<div class="calculator-card mt-[-175px] flex flex-col justify-center items-center">
+		<div class="toggle-wrapper flex relative bg-white rounded-full px-[12px] py-[8px] max-w-[270px] justify-center mb-[24px]">
+			<Toggle label="Enable Random Mode" :hasRefreshIcon="hasRefreshIcon" :onChange="handleModeChange" :refreshClick="fetchRandomRefreshHandler" />
+		</div>
+		<div class="w-[721px] bg-white rounded-[8px] shadow-md flex flex-col md:w-[400px]">
+			<div class="calculator-card-inner">
+				<div class="grid grid-cols-2 calculator-card-grid md:grid-cols-1">
+					<div class="calculator-card-left py-[32px] pl-[32px] pr-[24px]">
+						<h3 class="text-lg text-color-primary font-semibold mb-[24px]">Select Path</h3>
+						<div class="form-row mb-[24px]">
+							<CustomSelect :id="fromNode" placeholder="Select" label="From node" :options="selectOptions" :value="fromSelectedOption" :disabled="isSelectDisabled" :onChange="handleFromChange" />
+						</div>
+						<div class="form-row mb-[24px]">
+							<CustomSelect :id="toNode" placeholder="Select" label="To node" :options="selectOptions" :value="toSelectedOption" :disabled="isSelectDisabled" :onChange="handleToChange" />
+						</div>
+						<div class="flex items-center justify-start">
+							<Button v-if="activeMode !== 'random'" appearance="outline" class="mr-[12px] h-[44px]" type="reset" :disabled="isClearBtnDisabled" :onClick="clearBtnHandler">Clear</Button>
+							<Button appearance="solid" :hasIcon="true" :onClick="calculateHandler" :loading="isAppLoading" :disabled="isCalculateBtnDisabled" class="min-w-[146px] h-[44px]">
+								{{ activeMode === "input" ? "Calculate" : "Calculate Random" }}
+							</Button>
+						</div>
+						<Message v-if="isInputValidationErr" label="Please select valid FROM and TO nodes." status="error" />
+						<Message v-if="isAppError" :label="`Something went wrong. Status code: ${resultResStatus}`" status="error" />
+					</div>
+					<div class="relative flex items-center justify-center w-full h-full calculator-card-right">
+						<NoResultPlaceholder v-if="isAppDefault" />
+						<Loader v-if="isAppLoading" />
+						<ResultCard v-if="isAppSuccess" :fromNode="fromNode" :toNode="toNode" :nodeNames="resultNodeNames" :distance="resultDistance" />
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -12,10 +41,11 @@ import { type DijkstraStoreState, useDijkstraStore } from "@/stores/dijkstraStor
 import type { GraphState, OptionType } from "@/types";
 import { SELECT_OPTIONS } from "@/constants";
 import { getRandomNumbers } from "@/utils/getRandomNumbers";
+import handleSendResult from "@/utils/SendShortestPathData";
 import { dijkstra } from "@/utils/dijkstra";
 
 export type CalculatorCardProps = {
-	modeUnused?: DijkstraStoreState["activeMode"];
+	initMode?: DijkstraStoreState["activeMode"];
 };
 
 type Data = {
@@ -40,12 +70,18 @@ type Data = {
 export default defineComponent({
 	name: "CalculatorCard",
 	components: {
-		ExampleComponent: defineAsyncComponent(() => import("components/ExampleComponent.vue")),
+		Button: defineAsyncComponent(() => import("@/components/Button.vue")),
+		NoResultPlaceholder: defineAsyncComponent(() => import("@/components/NoResultPlaceholder.vue")),
+		ResultCard: defineAsyncComponent(() => import("@/components/ResultCard.vue")),
+		Loader: defineAsyncComponent(() => import("@/components/Loader.vue")),
+		Message: defineAsyncComponent(() => import("@/components/Message.vue")),
+		CustomSelect: defineAsyncComponent(() => import("@/components/CustomSelect.vue")),
+		Toggle: defineAsyncComponent(() => import("@/components/Toggle.vue")),
 	},
 	props: {
-		modeUnused: {
-			type: String as PropType<CalculatorCardProps["modeUnused"]>,
-			required: false,
+		initMode: {
+			type: String as PropType<CalculatorCardProps["initMode"]>,
+
 			default: "input",
 		},
 	},
@@ -67,10 +103,26 @@ export default defineComponent({
 		resultDistance: -1,
 	}),
 	watch: {
-		modeUnused() {
-			if (!!this.modeUnused) {
-				console.log(`Mode prop changed to: ${this.modeUnused}`);
+		initMode() {
+			this.setMode(this.initMode || "input");
+		},
+		activeMode() {
+			if (this.activeMode === "random") {
+				this.fetchRandomNumberHandler();
+				this.isSelectDisabled = true;
+				this.isClearBtnDisabled = true;
+				this.hasRefreshIcon = true;
+			} else {
+				this.isSelectDisabled = false;
+				this.isClearBtnDisabled = false;
+				this.hasRefreshIcon = false;
 			}
+			this.isAppSuccess = false;
+			this.isAppError = false;
+			this.isAppLoading = false;
+			this.isAppDefault = true;
+			this.isInputValidationErr = false;
+			this.isCalculateBtnDisabled = false;
 		},
 	},
 	computed: {
@@ -80,6 +132,9 @@ export default defineComponent({
 			"toNode",
 			"shortestPathData",
 		]),
+		selectOptions() {
+			return SELECT_OPTIONS;
+		},
 	},
 	methods: {
 		...mapActions(useDijkstraStore, [
@@ -87,6 +142,13 @@ export default defineComponent({
 			"addGraphEdge",
 			"setMode",
 		]),
+		handleModeChange(checked: boolean) {
+			if (checked === true) {
+				this.setMode("random");
+			} else {
+				this.setMode("input");
+			}
+		},
 		async fetchRandomNumberHandler() {
 			if (this.activeMode === "random") {
 				try {
@@ -117,12 +179,31 @@ export default defineComponent({
 			this.isAppSuccess = false;
 			this.fetchRandomNumberHandler();
 		},
-		handleFromChange(newValue: SingleValue<OptionType>) {
+		handleFromChange(newValue: OptionType) {
 			this.isCalculateBtnDisabled = false;
 			this.isAppDefault = true;
 			this.isAppSuccess = false;
 			this.fromSelectedOption = newValue;
 			this.fromNode = `${newValue?.value}`;
+		},
+		handleToChange(newValue: OptionType) {
+			this.isCalculateBtnDisabled = false;
+			this.isAppDefault = true;
+			this.isAppSuccess = false;
+			this.toSelectedOption = newValue;
+			this.toNode = `${newValue?.value}`;
+		},
+		clearBtnHandler() {
+			this.isAppSuccess = false;
+			this.isAppError = false;
+			this.isAppLoading = false;
+			this.isAppDefault = true;
+			this.isInputValidationErr = false;
+			this.isCalculateBtnDisabled = false;
+			this.fromSelectedOption = null;
+			this.toSelectedOption = null;
+			this.fromNode = "";
+			this.toNode = "";
 		},
 		calculateHandler() {
 			if (this.fromNode?.trim() !== "" && this.toNode?.trim() !== "") {
@@ -137,23 +218,23 @@ export default defineComponent({
 					})
 						.then(result => {
 							if (result?.status === 200) {
-								setResultResStatus(result?.status);
-								setIsAppSuccess(true);
-								setIsAppLoading(false);
-								setResultNodeNames(result?.data?.parsedBody?.nodeNames);
-								setResultDistance(result?.data?.parsedBody?.distance);
+								this.resultResStatus = result?.status;
+								this.isAppSuccess = true;
+								this.isAppLoading = false;
+								this.resultNodeNames = result?.data?.parsedBody?.nodeNames;
+								this.resultDistance = result?.data?.parsedBody?.distance;
 							}
 						})
 						.catch(err => {
-							setResultResStatus(err?.status);
-							setIsAppSuccess(false);
-							setIsAppDefault(true);
-							setIsAppError(true);
+							this.resultResStatus = err?.status;
+							this.isAppSuccess = false;
+							this.isAppDefault = true;
+							this.isAppError = true;
 						});
 				}, 500);
-				setIsCalculateBtnDisabled(true);
+				this.isCalculateBtnDisabled = true;
 			} else {
-				setIsInputValidationErr(true);
+				this.isInputValidationErr = true;
 			}
 		},
 	},

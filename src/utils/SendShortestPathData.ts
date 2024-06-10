@@ -1,9 +1,5 @@
 import axios from "axios";
-
-type ShortestPathData = {
-	readonly nodeNames: string[];
-	readonly distance: number;
-};
+import type { ShortestPathData } from "@/types";
 
 async function sendDataToEchoAPI(data: ShortestPathData): Promise<{ success: boolean; status: number; data: any }> {
 	try {
