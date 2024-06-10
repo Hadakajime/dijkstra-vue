@@ -1,4 +1,4 @@
-import type { GraphState, ShortestPathData } from "src/types";
+import type { GraphState, ShortestPathData } from "@/types";
 
 export const dijkstra = (graphState: GraphState, fromNode: string, toNode: string): ShortestPathData => {
 	const { adjacencyList } = graphState;

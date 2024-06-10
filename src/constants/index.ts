@@ -1,4 +1,4 @@
-import type { OptionType } from "src/types";
+import type { OptionType } from "@/types";
 
 export const SELECT_OPTIONS: OptionType[] = [
 	{ value: "A", label: "A" },
