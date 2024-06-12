@@ -1,7 +1,7 @@
 <template>
 	<div class="calculator-card mt-[-175px] flex flex-col justify-center items-center">
 		<div class="toggle-wrapper flex relative bg-white rounded-full px-[12px] py-[8px] max-w-[270px] justify-center mb-[24px]">
-			<Toggle v-model="isRandomMode" :hasRefreshIcon="hasRefreshIcon" :refreshClick="fetchRandomRefreshHandler"> Enable Random Mode </Toggle>
+			<Toggle v-model="isRandomMode" :hasRefreshIcon="hasRefreshIcon" :refreshClick="fetchRandomRefreshHandler">Enable Random Mode</Toggle>
 		</div>
 		<div class="w-[721px] bg-white rounded-[8px] shadow-md flex flex-col md:w-[400px]">
 			<div class="calculator-card-inner">
@@ -9,10 +9,10 @@
 					<div class="calculator-card-left py-[32px] pl-[32px] pr-[24px]">
 						<h3 class="text-lg text-color-primary font-semibold mb-[24px]">Select Path</h3>
 						<div class="form-row mb-[24px]">
-							<CustomSelect :id="fromNode" placeholder="Select" label="From node" :options="selectOptions" :value="fromSelectedOption" :disabled="isSelectDisabled" :onChange="handleFromChange" />
+							<CustomSelect :id="fromNode" placeholder="Select" :options="selectOptions" :value="fromSelectedOption" :disabled="isSelectDisabled" :onChange="handleFromChange">From node</CustomSelect>
 						</div>
 						<div class="form-row mb-[24px]">
-							<CustomSelect :id="toNode" placeholder="Select" label="To node" :options="selectOptions" :value="toSelectedOption" :disabled="isSelectDisabled" :onChange="handleToChange" />
+							<CustomSelect :id="toNode" placeholder="Select" :options="selectOptions" :value="toSelectedOption" :disabled="isSelectDisabled" :onChange="handleToChange">To node</CustomSelect>
 						</div>
 						<div class="flex items-center justify-start">
 							<Button v-if="activeMode !== 'random'" appearance="outline" class="mr-[12px] h-[44px]" type="reset" :disabled="isClearBtnDisabled" :onClick="clearBtnHandler">Clear</Button>
@@ -20,8 +20,8 @@
 								{{ activeMode === "input" ? "Calculate" : "Calculate Random" }}
 							</Button>
 						</div>
-						<Message v-if="isInputValidationErr" label="Please select valid FROM and TO nodes." status="error" />
-						<Message v-if="isAppError" :label="`Something went wrong. Status code: ${resultResStatus}`" status="error" />
+						<Message v-if="isInputValidationErr" status="error">Please select valid FROM and TO nodes.</Message>
+						<Message v-if="isAppError" status="error">Something went wrong. Status code: {{ resultResStatus }}</Message>
 					</div>
 					<div class="relative flex items-center justify-center w-full h-full calculator-card-right">
 						<NoResultPlaceholder v-if="isAppDefault" />

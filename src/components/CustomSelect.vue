@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<label :for="id" class="block text-color-body text-sm mb-[8px]">
-			{{ label }}
+			<slot></slot>
 		</label>
 		<v-select v-bind="$attrs" v-model="value" :id="id" :name="id" :options="options" :placeholder="placeholder" :disabled="disabled" :input="onChange"></v-select>
 	</div>
@@ -16,7 +16,6 @@ export type CustomSelectProps = {
 	options: OptionType[];
 	value?: OptionType | null;
 	placeholder?: string;
-	label?: string;
 	disabled?: boolean;
 	id?: string;
 	onChange: (selectedOption: OptionType) => void;
@@ -33,10 +32,6 @@ export default defineComponent({
 			default: null,
 		},
 		placeholder: {
-			type: String,
-			default: "",
-		},
-		label: {
 			type: String,
 			default: "",
 		},

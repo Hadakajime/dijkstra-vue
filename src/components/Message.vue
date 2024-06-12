@@ -1,7 +1,7 @@
 <template>
 	<div :class="wrapperClasses">
 		<p :class="labelClasses">
-			{{ label }}
+			<slot></slot>
 		</p>
 	</div>
 </template>
@@ -10,14 +10,12 @@
 import { defineComponent } from "vue";
 
 export type MessageProps = {
-	label: string;
 	status?: string;
 };
 
 export default defineComponent({
 	name: "Message",
 	props: {
-		label: String,
 		status: {
 			type: String,
 			required: false,
