@@ -1,7 +1,7 @@
 <template>
 	<div class="calculator-card mt-[-175px] flex flex-col justify-center items-center">
 		<div class="toggle-wrapper flex relative bg-white rounded-full px-[12px] py-[8px] max-w-[270px] justify-center mb-[24px]">
-			<Toggle v-model="isRandomMode" :hasRefreshIcon="hasRefreshIcon" :refreshClick="fetchRandomRefreshHandler">Enable Random Mode</Toggle>
+			<Toggle v-model="isRandomMode" :hasRefreshIcon="hasRefreshIcon" :refreshClick="fetchRandomRefreshHandler"> Enable Random Mode </Toggle>
 		</div>
 		<div class="w-[721px] bg-white rounded-[8px] shadow-md flex flex-col md:w-[400px]">
 			<div class="calculator-card-inner">
@@ -99,7 +99,7 @@ export default defineComponent({
 		]),
 		isRandomMode: {
 			get() {
-				return this.activeMode === 'random';
+				return this.activeMode === "random";
 			},
 			set(value: boolean) {
 				this.isAppSuccess = false;

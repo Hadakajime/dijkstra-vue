@@ -18,7 +18,7 @@ import { defineComponent, type PropType } from "vue";
 
 export type ToggleProps = {
 	modelValue: boolean;
-	id: string,
+	id: string;
 	hasRefreshIcon?: boolean;
 	refreshClick?: () => void;
 };
