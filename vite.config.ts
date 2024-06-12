@@ -11,7 +11,13 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url))
+      "@components": fileURLToPath(new URL("./src/components", import.meta.url)),
+      "@constants": fileURLToPath(new URL("./src/constants", import.meta.url)),
+      "@stores": fileURLToPath(new URL("./src/stores", import.meta.url)),
+      "@defs": fileURLToPath(new URL("./src/defs", import.meta.url)),
+      "@utils": fileURLToPath(new URL("./src/utils", import.meta.url)),
+      "@public": fileURLToPath(new URL("./public", import.meta.url)),
+      "@src": fileURLToPath(new URL("./src", import.meta.url)),
     }
   }
 })

@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import "@/App.css";
+import "./App.css";
 import { defineComponent, defineAsyncComponent } from "vue";
 
 export default defineComponent({

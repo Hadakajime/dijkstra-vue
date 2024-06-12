@@ -1,7 +1,7 @@
 <template>
 	<div class="calculator-card mt-[-175px] flex flex-col justify-center items-center">
 		<div class="toggle-wrapper flex relative bg-white rounded-full px-[12px] py-[8px] max-w-[270px] justify-center mb-[24px]">
-			<Toggle label="Enable Random Mode" :hasRefreshIcon="hasRefreshIcon" :onChange="handleModeChange" :refreshClick="fetchRandomRefreshHandler" />
+			<Toggle v-model="isRandomMode" label="Enable Random Mode" :hasRefreshIcon="hasRefreshIcon" :refreshClick="fetchRandomRefreshHandler" />
 		</div>
 		<div class="w-[721px] bg-white rounded-[8px] shadow-md flex flex-col md:w-[400px]">
 			<div class="calculator-card-inner">
@@ -35,21 +35,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent, type PropType } from "vue";
+import { defineComponent, defineAsyncComponent } from "vue";
 import { mapState, mapActions } from "pinia";
-import { type DijkstraStoreState, useDijkstraStore } from "@/stores/dijkstraStore";
-import type { GraphState, OptionType } from "@/types";
-import { SELECT_OPTIONS } from "@/constants";
-import { getRandomNumbers } from "@/utils/getRandomNumbers";
-import handleSendResult from "@/utils/SendShortestPathData";
-import { dijkstra } from "@/utils/dijkstra";
-
-export type CalculatorCardProps = {
-	initMode?: DijkstraStoreState["activeMode"];
-};
+import { useDijkstraStore } from "@stores/dijkstraStore";
+import type { GraphState, OptionType } from "@defs/index";
+import { SELECT_OPTIONS } from "@constants/index";
+import { getRandomNumbers } from "@utils/getRandomNumbers";
+import handleSendResult from "@utils/SendShortestPathData";
+import { dijkstra } from "@utils/dijkstra";
 
 type Data = {
-	activeMode?: string;
 	graphState: GraphState;
 	fromSelectedOption: OptionType | null;
 	toSelectedOption: OptionType | null;
@@ -70,19 +65,13 @@ type Data = {
 export default defineComponent({
 	name: "CalculatorCard",
 	components: {
-		Button: defineAsyncComponent(() => import("@/components/Button.vue")),
-		NoResultPlaceholder: defineAsyncComponent(() => import("@/components/NoResultPlaceholder.vue")),
-		ResultCard: defineAsyncComponent(() => import("@/components/ResultCard.vue")),
-		Loader: defineAsyncComponent(() => import("@/components/Loader.vue")),
-		Message: defineAsyncComponent(() => import("@/components/Message.vue")),
-		CustomSelect: defineAsyncComponent(() => import("@/components/CustomSelect.vue")),
-		Toggle: defineAsyncComponent(() => import("@/components/Toggle.vue")),
-	},
-	props: {
-		initMode: {
-			type: String as PropType<CalculatorCardProps["initMode"]>,
-			default: "input",
-		},
+		Button: defineAsyncComponent(() => import("@components/Button.vue")),
+		NoResultPlaceholder: defineAsyncComponent(() => import("@components/NoResultPlaceholder.vue")),
+		ResultCard: defineAsyncComponent(() => import("@components/ResultCard.vue")),
+		Loader: defineAsyncComponent(() => import("@components/Loader.vue")),
+		Message: defineAsyncComponent(() => import("@components/Message.vue")),
+		CustomSelect: defineAsyncComponent(() => import("@components/CustomSelect.vue")),
+		Toggle: defineAsyncComponent(() => import("@components/Toggle.vue")),
 	},
 	data: (): Data => ({
 		graphState: {} as GraphState,
@@ -101,29 +90,6 @@ export default defineComponent({
 		resultNodeNames: [],
 		resultDistance: -1,
 	}),
-	watch: {
-		initMode() {
-			this.setMode(this.initMode || "input");
-		},
-		activeMode() {
-			if (this.activeMode === "random") {
-				this.fetchRandomNumberHandler();
-				this.isSelectDisabled = true;
-				this.isClearBtnDisabled = true;
-				this.hasRefreshIcon = true;
-			} else {
-				this.isSelectDisabled = false;
-				this.isClearBtnDisabled = false;
-				this.hasRefreshIcon = false;
-			}
-			this.isAppSuccess = false;
-			this.isAppError = false;
-			this.isAppLoading = false;
-			this.isAppDefault = true;
-			this.isInputValidationErr = false;
-			this.isCalculateBtnDisabled = false;
-		},
-	},
 	computed: {
 		...mapState(useDijkstraStore, [
 			"activeMode",
@@ -131,6 +97,31 @@ export default defineComponent({
 			"toNode",
 			"shortestPathData",
 		]),
+		isRandomMode: {
+			get() {
+				return this.activeMode === 'random';
+			},
+			set(value: boolean) {
+				this.isAppSuccess = false;
+				this.isAppError = false;
+				this.isAppLoading = false;
+				this.isAppDefault = true;
+				this.isInputValidationErr = false;
+				this.isCalculateBtnDisabled = false;
+				if (value) {
+					this.isSelectDisabled = true;
+					this.isClearBtnDisabled = true;
+					this.hasRefreshIcon = true;
+					this.setMode("random");
+					this.fetchRandomNumberHandler();
+				} else {
+					this.isSelectDisabled = false;
+					this.isClearBtnDisabled = false;
+					this.hasRefreshIcon = false;
+					this.setMode("input");
+				}
+			},
+		},
 		selectOptions() {
 			return SELECT_OPTIONS;
 		},
@@ -141,13 +132,6 @@ export default defineComponent({
 			"addGraphEdge",
 			"setMode",
 		]),
-		handleModeChange(checked: boolean) {
-			if (checked === true) {
-				this.setMode("random");
-			} else {
-				this.setMode("input");
-			}
-		},
 		async fetchRandomNumberHandler() {
 			if (this.activeMode === "random") {
 				try {

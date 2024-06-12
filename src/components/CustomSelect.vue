@@ -10,7 +10,7 @@
 <script lang="ts">
 import "vue-select/dist/vue-select.css";
 import { defineComponent, type PropType } from "vue";
-import type { OptionType } from "@/types";
+import type { OptionType } from "@defs/index";
 
 export type CustomSelectProps = {
 	options: OptionType[];

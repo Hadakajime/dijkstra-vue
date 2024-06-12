@@ -1,7 +1,7 @@
-export interface GraphState {
+export type GraphState = {
 	adjacencyList: Record<string, Record<string, number>>;
 	vertexData: string[];
-}
+};
 
 export type OptionType = {
 	value: string;

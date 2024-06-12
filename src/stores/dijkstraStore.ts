@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { GraphState, OptionType, ShortestPathData } from "@/types";
+import type { GraphState, ShortestPathData } from "@defs/index";
 
 export type DijkstraStoreState = {
 	activeMode: "input" | "random";

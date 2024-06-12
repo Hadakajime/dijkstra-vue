@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import "@/components/ButtonLoader.css";
+import "@components/ButtonLoader.css";
 import { defineComponent } from "vue";
 
 export default defineComponent({

@@ -2,7 +2,7 @@
 	<button class="flex items-center justify-center rounded-[8px] border border-color-secondary px-[16px] py-[12px] tex-md" :class="classes" :onClick="onClick" :type="type" :disabled="disabled || loading">
 		<ButtonLoader v-if="loading" />
 		<span v-if="hasIcon && !loading" class="mr-2">
-			<img :src="calculatorImage" />
+			<img src="@public/calculator.svg" />
 		</span>
 		<slot v-if="!loading"></slot>
 	</button>
@@ -10,7 +10,6 @@
 
 <script lang="ts">
 import { defineComponent, defineAsyncComponent, type PropType } from "vue";
-import calculatorImage from "@@/calculator.svg";
 
 export type ButtonProps = {
 	appearance?: "solid" | "outline";
@@ -24,7 +23,7 @@ export type ButtonProps = {
 export default defineComponent({
 	name: "Button",
 	components: {
-		ButtonLoader: defineAsyncComponent(() => import("@/components/ButtonLoader.vue")),
+		ButtonLoader: defineAsyncComponent(() => import("@components/ButtonLoader.vue")),
 	},
 	props: {
 		appearance: {
@@ -51,9 +50,6 @@ export default defineComponent({
 				"text-white bg-color-secondary cursor-not-allowed opacity-80": (this.appearance === "solid" && this.disabled) || this.loading,
 				"text-color-secondary cursor-not-allowed opacity-80": (this.appearance === "outline" && this.disabled) || this.loading,
 			};
-		},
-		calculatorImage() {
-			return calculatorImage;
 		},
 	},
 });
