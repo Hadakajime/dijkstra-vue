@@ -8,41 +8,35 @@
 </template>
 
 <script lang="ts">
-import "vue-select/dist/vue-select.css";
 import { defineComponent, type PropType } from "vue";
 import type { OptionType } from "@defs/index";
-
-export type CustomSelectProps = {
-	options: OptionType[];
-	value?: OptionType | null;
-	placeholder?: string;
-	disabled?: boolean;
-	id?: string;
-	onChange: (selectedOption: OptionType) => void;
-};
 
 export default defineComponent({
 	name: "CustomSelect",
 	props: {
-		options: {
-			type: Array as PropType<CustomSelectProps["options"]>,
-		},
-		value: {
-			type: Object as PropType<CustomSelectProps["value"]>,
-			default: null,
-		},
-		placeholder: {
-			type: String,
-			default: "",
-		},
 		disabled: Boolean,
 		id: {
 			type: String,
 			default: "",
 		},
 		onChange: {
-			type: Function as PropType<CustomSelectProps["onChange"]>,
+			type: Function as PropType<(selectedOption: OptionType) => void>,
+		},
+		options: {
+			type: Array as PropType<OptionType[]>,
+		},
+		placeholder: {
+			type: String,
+			default: "",
+		},
+		value: {
+			type: Object as PropType<OptionType | null>,
+			default: null,
 		},
 	},
 });
 </script>
+
+<style>
+@import "vue-select/dist/vue-select.css";
+</style>

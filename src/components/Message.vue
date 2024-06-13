@@ -7,17 +7,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-
-export type MessageProps = {
-	status?: string;
-};
+import { defineComponent, type PropType } from "vue";
 
 export default defineComponent({
 	name: "Message",
 	props: {
 		status: {
-			type: String,
+			type: String as PropType<"error" | "success">,
 			required: false,
 		},
 	},

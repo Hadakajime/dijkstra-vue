@@ -16,13 +16,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue";
 
-export type ToggleProps = {
-	modelValue: boolean;
-	id: string;
-	hasRefreshIcon?: boolean;
-	refreshClick?: () => void;
-};
-
 export default defineComponent({
 	name: "Toggle",
 	props: {
@@ -30,7 +23,7 @@ export default defineComponent({
 		id: String,
 		hasRefreshIcon: Boolean,
 		refreshClick: {
-			type: Function as PropType<ToggleProps["refreshClick"]>,
+			type: Function as PropType<() => void>,
 			required: false,
 		},
 	},

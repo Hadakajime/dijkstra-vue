@@ -11,23 +11,16 @@
 <script lang="ts">
 import { defineComponent, type PropType } from "vue";
 
-export type ResultCardProps = {
-	fromNode: string;
-	toNode: string;
-	nodeNames: string[];
-	distance: number | undefined;
-};
-
 export default defineComponent({
 	name: "ResultCard",
 	props: {
-		fromNode: String,
-		toNode: String,
-		nodeNames: Array as PropType<ResultCardProps["nodeNames"]>,
 		distance: {
 			type: Number,
 			required: false,
 		},
+		fromNode: String,
+		nodeNames: Array as PropType<string[]>,
+		toNode: String,
 	},
 });
 </script>

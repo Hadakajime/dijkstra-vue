@@ -11,15 +11,6 @@
 <script lang="ts">
 import { defineComponent, defineAsyncComponent, type PropType } from "vue";
 
-export type ButtonProps = {
-	appearance?: "solid" | "outline";
-	disabled?: boolean;
-	loading?: boolean;
-	onClick?: () => void;
-	hasIcon?: boolean;
-	type?: "button" | "submit" | "reset";
-};
-
 export default defineComponent({
 	name: "Button",
 	components: {
@@ -27,18 +18,18 @@ export default defineComponent({
 	},
 	props: {
 		appearance: {
-			type: String as PropType<ButtonProps["appearance"]>,
+			type: String as PropType<"solid" | "outline">,
 			default: "solid",
 		},
 		disabled: Boolean,
+		hasIcon: Boolean,
 		loading: Boolean,
 		onClick: {
-			type: Function as PropType<ButtonProps["onClick"]>,
+			type: Function as PropType<() => void>,
 			default: () => undefined,
 		},
-		hasIcon: Boolean,
 		type: {
-			type: String as PropType<ButtonProps["type"]>,
+			type: String as PropType<"button" | "submit" | "reset">,
 			default: "button",
 		},
 	},
