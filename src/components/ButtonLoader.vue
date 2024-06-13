@@ -3,10 +3,44 @@
 </template>
 
 <script lang="ts">
-import "./ButtonLoader.css";
 import { defineComponent } from "vue";
 
 export default defineComponent({
 	name: "ButtonLoader",
 });
 </script>
+
+<style scoped>
+.btn-loader {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	box-shadow:
+		32px 0 #ffffff,
+		-32px 0 #ffffff;
+	position: relative;
+	animation: flash 0.5s ease-out infinite alternate;
+}
+
+@keyframes flash {
+	0% {
+		background-color: #fff2;
+		box-shadow:
+			15px 0 #fff2,
+			-15px 0 #ffffff;
+	}
+	50% {
+		background-color: #ffffff;
+		box-shadow:
+			15px 0 #fff2,
+			-15px 0 #fff2;
+	}
+	100% {
+		background-color: #fff2;
+		box-shadow:
+			15px 0 #ffffff,
+			-15px 0 #fff2;
+	}
+}
+</style>

@@ -11,7 +11,6 @@
 </template>
 
 <script lang="ts">
-import "./App.css";
 import { defineComponent, defineAsyncComponent } from "vue";
 
 export default defineComponent({
@@ -21,3 +20,9 @@ export default defineComponent({
 	},
 });
 </script>
+
+<style>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</style>
