@@ -9,16 +9,14 @@
 					<div class="calculator-card-left py-[32px] pl-[32px] pr-[24px]">
 						<h3 class="text-lg text-color-primary font-semibold mb-[24px]">Select Path</h3>
 						<div class="form-row mb-[24px]">
-							<CustomSelect :id="fromNode" placeholder="Select" :options="selectOptions" :value="fromSelectedOption" :disabled="isSelectDisabled" :onChange="handleFromChange">From node</CustomSelect>
+							<CustomSelect id="fromNode" placeholder="Select" :options="selectOptions" v-model="fromSelectedOption" :disabled="isSelectDisabled">From node</CustomSelect>
 						</div>
 						<div class="form-row mb-[24px]">
-							<CustomSelect :id="toNode" placeholder="Select" :options="selectOptions" :value="toSelectedOption" :disabled="isSelectDisabled" :onChange="handleToChange">To node</CustomSelect>
+							<CustomSelect id="toNode" placeholder="Select" :options="selectOptions" v-model="toSelectedOption" :disabled="isSelectDisabled">To node</CustomSelect>
 						</div>
 						<div class="flex items-center justify-start">
 							<Button v-if="activeMode !== 'random'" appearance="outline" class="mr-[12px] h-[44px]" type="reset" :disabled="isClearBtnDisabled" :onClick="clearBtnHandler">Clear</Button>
-							<Button appearance="solid" :hasIcon="true" :onClick="calculateHandler" :loading="isAppLoading" :disabled="isCalculateBtnDisabled" class="min-w-[146px] h-[44px]">
-								{{ activeMode === "input" ? "Calculate" : "Calculate Random" }}
-							</Button>
+							<Button appearance="solid" :hasIcon="true" :onClick="calculateHandler" :loading="isAppLoading" :disabled="isCalculateBtnDisabled" class="min-w-[146px] h-[44px]">{{ activeMode === "input" ? "Calculate" : "Calculate Random" }}</Button>
 						</div>
 						<Message v-if="isInputValidationErr" status="error">Please select valid FROM and TO nodes.</Message>
 						<Message v-if="isAppError" status="error">Something went wrong. Status code: {{ resultResStatus }}</Message>
@@ -36,16 +34,15 @@
 
 <script lang="ts">
 import { defineComponent, defineAsyncComponent } from "vue";
-import { mapState, mapActions } from "pinia";
+import { mapWritableState, mapActions } from "pinia";
 import { useDijkstraStore } from "@stores/dijkstraStore";
-import type { GraphState, OptionType } from "@defs/index";
+import type { OptionType } from "@defs/index";
 import { SELECT_OPTIONS } from "@constants/index";
 import { getRandomNumbers } from "@utils/getRandomNumbers";
 import handleSendResult from "@utils/SendShortestPathData";
 import { dijkstra } from "@utils/dijkstra";
 
 type Data = {
-	graphState: GraphState;
 	fromSelectedOption: OptionType | null;
 	toSelectedOption: OptionType | null;
 	isInputValidationErr: boolean;
@@ -74,7 +71,6 @@ export default defineComponent({
 		Toggle: defineAsyncComponent(() => import("@components/Toggle.vue")),
 	},
 	data: (): Data => ({
-		graphState: {} as GraphState,
 		fromSelectedOption: null,
 		toSelectedOption: null,
 		isInputValidationErr: false,
@@ -91,11 +87,12 @@ export default defineComponent({
 		resultDistance: -1,
 	}),
 	computed: {
-		...mapState(useDijkstraStore, [
+		...mapWritableState(useDijkstraStore, [
 			"activeMode",
 			"fromNode",
-			"toNode",
+			"graphState",
 			"shortestPathData",
+			"toNode",
 		]),
 		isRandomMode: {
 			get() {
@@ -167,14 +164,14 @@ export default defineComponent({
 			this.isAppDefault = true;
 			this.isAppSuccess = false;
 			this.fromSelectedOption = newValue;
-			this.fromNode = `${newValue?.value}`;
+			this.fromNode = newValue?.value;
 		},
 		handleToChange(newValue: OptionType) {
 			this.isCalculateBtnDisabled = false;
 			this.isAppDefault = true;
 			this.isAppSuccess = false;
 			this.toSelectedOption = newValue;
-			this.toNode = `${newValue?.value}`;
+			this.toNode = newValue?.value;
 		},
 		clearBtnHandler() {
 			this.isAppSuccess = false;

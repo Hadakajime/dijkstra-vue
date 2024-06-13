@@ -29,9 +29,19 @@ export default defineComponent({
 			type: String,
 			default: "",
 		},
-		value: {
+		modelValue: {
 			type: Object as PropType<OptionType | null>,
 			default: null,
+		},
+	},
+	computed: {
+		value: {
+			get() {
+				return this.modelValue;
+			},
+			set(value: string) {
+				this.$emit("update:modelValue", value);
+			},
 		},
 	},
 });
