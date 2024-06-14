@@ -89,10 +89,10 @@ export const useDijkstraStore = defineStore("dijkstra", {
 			if (this.activeMode !== "random") {
 				return;
 			}
+			this.updateNodeSelection("", "");
 			this.isCalculateBtnDisabled = true;
 			this.isAppDefault = false;
 			this.isAppLoading = true;
-			this.isAppSuccess = false;
 			try {
 				const randomLetters = await getRandomNumbers();
 				this.updateNodeSelection(randomLetters?.fromNode, randomLetters?.toNode);
@@ -101,8 +101,8 @@ export const useDijkstraStore = defineStore("dijkstra", {
 				this.updateNodeSelection("", "");
 			}
 			this.isCalculateBtnDisabled = false;
-			this.isAppLoading = false;
 			this.isAppDefault = true;
+			this.isAppLoading = false;
 		},
 		calculateShortestPath() {
 			if (this.fromNode?.trim() !== "" && this.toNode?.trim() !== "") {
