@@ -27,6 +27,9 @@ export default defineComponent({
 			required: false,
 		},
 	},
+	emits: [
+		"update:modelValue",
+	],
 	computed: {
 		checked: {
 			get() {

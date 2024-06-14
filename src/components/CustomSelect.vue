@@ -34,6 +34,9 @@ export default defineComponent({
 			default: null,
 		},
 	},
+	emits: [
+		"update:modelValue",
+	],
 	computed: {
 		value: {
 			get() {
