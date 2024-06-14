@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { getRandomNumbers } from "@utils/getRandomNumbers";
 import type { GraphState, ShortestPathData } from "@defs/index";
+import handleSendResult from "@utils/SendShortestPathData";
+import { dijkstra } from "@utils/dijkstra";
 
 export type DijkstraStoreState = {
 	activeMode: "input" | "random";
@@ -15,6 +17,7 @@ export type DijkstraStoreState = {
 	isClearBtnDisabled: boolean;
 	isInputValidationErr: boolean;
 	isSelectDisabled: boolean;
+	resultResStatus: number;
 	shortestPathData?: ShortestPathData;
 	toNode: string;
 };
@@ -36,6 +39,7 @@ export const useDijkstraStore = defineStore("dijkstra", {
 		isClearBtnDisabled: false,
 		isInputValidationErr: false,
 		isSelectDisabled: false,
+		resultResStatus: -1,
 		shortestPathData: undefined,
 		toNode: "",
 	}),
@@ -98,6 +102,41 @@ export const useDijkstraStore = defineStore("dijkstra", {
 			this.isCalculateBtnDisabled = false;
 			this.isAppLoading = false;
 			this.isAppDefault = true;
+		},
+		calculateShortestPath() {
+			if (this.fromNode?.trim() !== "" && this.toNode?.trim() !== "") {
+				this.isInputValidationErr = false;
+				this.isAppDefault = false;
+				this.isAppLoading = true;
+				const { nodeNames, distance } = dijkstra(this.graphState, this.fromNode, this.toNode);
+				setTimeout(() => {
+					handleSendResult({
+						nodeNames: nodeNames,
+						distance: distance,
+					})
+						.then(result => {
+							if (result?.status === 200) {
+								this.resultResStatus = result?.status;
+								this.isAppSuccess = true;
+								this.isAppLoading = false;
+								this.shortestPathData = {
+									nodeNames: result?.data?.parsedBody?.nodeNames,
+									distance: result?.data?.parsedBody?.distance,
+								};
+							}
+						})
+						.catch(err => {
+							this.resultResStatus = err?.status;
+							this.isAppSuccess = false;
+							this.isAppDefault = true;
+							this.isAppError = true;
+							this.shortestPathData = undefined;
+						});
+				}, 500);
+				this.isCalculateBtnDisabled = true;
+			} else {
+				this.isInputValidationErr = true;
+			}
 		},
 		initialiseDefaultGraph() {
 			this.graphState = {
