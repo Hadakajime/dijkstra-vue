@@ -105,7 +105,7 @@ export const useDijkstraStore = defineStore("dijkstra", {
 			this.isAppLoading = false;
 		},
 		calculateShortestPath() {
-			if (this.fromNode?.trim() !== "" && this.toNode?.trim() !== "") {
+			if (!!this.fromNode?.trim() && !!this.toNode?.trim()) {
 				this.isInputValidationErr = false;
 				this.isAppDefault = false;
 				this.isAppLoading = true;

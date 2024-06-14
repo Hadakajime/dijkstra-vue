@@ -91,7 +91,7 @@ export default defineComponent({
 				};
 			},
 			set(value: OptionType) {
-				this.updateNodeSelection(value.value, this.toNode);
+				this.updateNodeSelection(value?.value || "", this.toNode);
 			},
 		},
 		toSelectedOption: {
@@ -102,7 +102,7 @@ export default defineComponent({
 				};
 			},
 			set(value: OptionType) {
-				this.updateNodeSelection(this.fromNode, value.value);
+				this.updateNodeSelection(this.fromNode, value?.value || "");
 			},
 		},
 	},
