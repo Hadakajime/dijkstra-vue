@@ -92,6 +92,7 @@ export const useDijkstraStore = defineStore("dijkstra", {
 			this.isCalculateBtnDisabled = true;
 			this.isAppDefault = false;
 			this.isAppLoading = true;
+			this.isAppSuccess = false;
 			try {
 				const randomLetters = await getRandomNumbers();
 				this.updateNodeSelection(randomLetters?.fromNode, randomLetters?.toNode);
