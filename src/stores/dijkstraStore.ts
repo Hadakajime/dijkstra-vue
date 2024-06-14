@@ -49,7 +49,7 @@ export const useDijkstraStore = defineStore("dijkstra", {
 			}
 			this.graphState.adjacencyList[u][v] = weight;
 		},
-		setMode(mode: DijkstraStoreState["activeMode"]) {
+		async setMode(mode: DijkstraStoreState["activeMode"]) {
 			this.activeMode = mode;
 			this.isAppSuccess = false;
 			this.isAppError = false;
@@ -62,7 +62,7 @@ export const useDijkstraStore = defineStore("dijkstra", {
 					this.isSelectDisabled = true;
 					this.isClearBtnDisabled = true;
 					this.hasRefreshIcon = true;
-					this.fetchRandomNumbers(); // no await
+					await this.fetchRandomNumbers();
 					break;
 				case "input":
 					this.isSelectDisabled = false;
@@ -93,6 +93,7 @@ export const useDijkstraStore = defineStore("dijkstra", {
 				this.updateNodeSelection(randomLetters?.fromNode, randomLetters?.toNode);
 			} catch (error) {
 				console.error("Error:", error);
+				this.updateNodeSelection("", "");
 			}
 			this.isCalculateBtnDisabled = false;
 			this.isAppLoading = false;
