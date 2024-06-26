@@ -8,7 +8,7 @@
 			</span>
 		</label>
 		<button v-if="hasRefreshIcon" class="flex re-calculate-random ml-[16px] cursor-pointer" :onClick="refreshClick">
-			<img src="@public/refresh.svg" width="25" />
+			<img src="/refresh.svg?url" width="25" />
 		</button>
 	</div>
 </template>

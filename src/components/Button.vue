@@ -2,7 +2,7 @@
 	<button class="flex items-center justify-center rounded-[8px] border border-color-secondary px-[16px] py-[12px] tex-md" :class="classes" :onClick="onClick" :type="type" :disabled="disabled || loading">
 		<ButtonLoader v-if="loading" />
 		<span v-if="hasIcon && !loading" class="mr-2">
-			<img src="@public/calculator.svg" />
+			<img src="/calculator.svg?url" />
 		</span>
 		<slot v-if="!loading"></slot>
 	</button>

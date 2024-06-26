@@ -1,6 +1,6 @@
 <template>
 	<div class="flex items-center justify-center w-full h-full md:py-[40px]">
-		<img src="@public/noresultbg.svg" />
+		<img src="/noresultbg.svg?url" />
 	</div>
 </template>
 
