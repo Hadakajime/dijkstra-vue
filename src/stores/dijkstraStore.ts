@@ -8,15 +8,9 @@ export type DijkstraStoreState = {
 	activeMode: "input" | "random";
 	fromNode: string;
 	graphState: GraphState;
-	hasRefreshIcon: boolean;
-	isAppDefault: boolean;
 	isAppError: boolean;
 	isAppLoading: boolean;
-	isAppSuccess: boolean;
-	isCalculateBtnDisabled: boolean;
-	isClearBtnDisabled: boolean;
 	isInputValidationErr: boolean;
-	isSelectDisabled: boolean;
 	resultResStatus: number;
 	shortestPathData?: ShortestPathData;
 	toNode: string;
@@ -30,19 +24,30 @@ export const useDijkstraStore = defineStore("dijkstra", {
 			adjacencyList: {},
 			vertexData: [],
 		},
-		hasRefreshIcon: false,
-		isAppDefault: true,
 		isAppError: false,
 		isAppLoading: false,
-		isAppSuccess: false,
-		isCalculateBtnDisabled: false,
-		isClearBtnDisabled: false,
 		isInputValidationErr: false,
-		isSelectDisabled: false,
 		resultResStatus: -1,
 		shortestPathData: undefined,
 		toNode: "",
 	}),
+	getters: {
+		hasRefreshIcon(): boolean {
+			return this.activeMode === "random";
+		},
+		isAppResult(): boolean {
+			return !!this.shortestPathData;
+		},
+		isCalculateBtnDisabled(): boolean {
+			return this.isAppResult || this.isAppLoading;
+		},
+		isClearBtnDisabled(): boolean {
+			return this.activeMode === "random";
+		},
+		isSelectDisabled(): boolean {
+			return this.activeMode === "random";
+		},
+	},
 	actions: {
 		addGraphVertex(vertex: number, data: string) {
 			this.graphState.vertexData[vertex] = data;
@@ -55,43 +60,31 @@ export const useDijkstraStore = defineStore("dijkstra", {
 		},
 		async setMode(mode: DijkstraStoreState["activeMode"]) {
 			this.activeMode = mode;
-			this.isAppSuccess = false;
 			this.isAppError = false;
 			this.isAppLoading = false;
-			this.isAppDefault = true;
 			this.isInputValidationErr = false;
-			this.isCalculateBtnDisabled = false;
+			this.shortestPathData = undefined;
 			switch (mode) {
 				case "random":
-					this.isSelectDisabled = true;
-					this.isClearBtnDisabled = true;
-					this.hasRefreshIcon = true;
 					await this.fetchRandomNumbers();
 					break;
 				case "input":
-					this.isSelectDisabled = false;
-					this.isClearBtnDisabled = false;
-					this.hasRefreshIcon = false;
 					break;
 			}
 		},
 		updateNodeSelection(fromNode: string, toNode: string) {
 			this.fromNode = fromNode;
 			this.toNode = toNode;
-			this.isCalculateBtnDisabled = false;
-			this.isAppDefault = true;
-			this.isAppSuccess = false;
 			this.isAppError = false;
 			this.isAppLoading = false;
 			this.isInputValidationErr = false;
+			this.shortestPathData = undefined;
 		},
 		async fetchRandomNumbers() {
 			if (this.activeMode !== "random") {
 				return;
 			}
 			this.updateNodeSelection("", "");
-			this.isCalculateBtnDisabled = true;
-			this.isAppDefault = false;
 			this.isAppLoading = true;
 			try {
 				const randomLetters = await getRandomNumbers();
@@ -100,41 +93,32 @@ export const useDijkstraStore = defineStore("dijkstra", {
 				console.error("Error:", error);
 				this.updateNodeSelection("", "");
 			}
-			this.isCalculateBtnDisabled = false;
-			this.isAppDefault = true;
 			this.isAppLoading = false;
 		},
 		calculateShortestPath() {
 			if (!!this.fromNode?.trim() && !!this.toNode?.trim()) {
-				this.isInputValidationErr = false;
-				this.isAppDefault = false;
 				this.isAppLoading = true;
-				const { nodeNames, distance } = dijkstra(this.graphState, this.fromNode, this.toNode);
-				setTimeout(() => {
-					handleSendResult({
+				this.isInputValidationErr = false;
+				setTimeout(async () => {
+					const { nodeNames, distance } = dijkstra(this.graphState, this.fromNode, this.toNode);
+					const result = await handleSendResult({
 						nodeNames: nodeNames,
 						distance: distance,
-					})
-						.then(result => {
-							if (result?.status === 200) {
-								this.resultResStatus = result?.status;
-								this.isAppSuccess = true;
-								this.isAppLoading = false;
-								this.shortestPathData = {
-									nodeNames: result?.data?.parsedBody?.nodeNames,
-									distance: result?.data?.parsedBody?.distance,
-								};
-							}
-						})
-						.catch(err => {
-							this.resultResStatus = err?.status;
-							this.isAppSuccess = false;
-							this.isAppDefault = true;
-							this.isAppError = true;
-							this.shortestPathData = undefined;
-						});
+					});
+					if (result?.status === 200) {
+						this.resultResStatus = result?.status;
+						this.shortestPathData = {
+							nodeNames: result?.data?.parsedBody?.nodeNames,
+							distance: result?.data?.parsedBody?.distance,
+						};
+					} else {
+						this.resultResStatus = result?.status;
+						this.isAppError = true;
+						this.shortestPathData = undefined;
+					}
+					console.log(result);
+					this.isAppLoading = false;
 				}, 500);
-				this.isCalculateBtnDisabled = true;
 			} else {
 				this.isInputValidationErr = true;
 			}

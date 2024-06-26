@@ -22,9 +22,9 @@
 						<Message v-if="isAppError" status="error">Something went wrong. Status code: {{ resultResStatus }}</Message>
 					</div>
 					<div class="relative flex items-center justify-center w-full h-full calculator-card-right">
-						<NoResultPlaceholder v-if="isAppDefault" />
 						<Loader v-if="isAppLoading" />
-						<ResultCard v-if="isAppSuccess" :fromNode="fromNode" :toNode="toNode" :nodeNames="shortestPathData?.nodeNames" :distance="shortestPathData?.distance" />
+						<NoResultPlaceholder v-if="!isAppLoading && !isAppResult" />
+						<ResultCard v-if="!isAppLoading && isAppResult" :fromNode="fromNode" :toNode="toNode" :nodeNames="shortestPathData?.nodeNames" :distance="shortestPathData?.distance" />
 					</div>
 				</div>
 			</div>
@@ -58,10 +58,9 @@ export default defineComponent({
 			"shortestPathData",
 			"toNode",
 			"hasRefreshIcon",
-			"isAppDefault",
 			"isAppError",
 			"isAppLoading",
-			"isAppSuccess",
+			"isAppResult",
 			"isCalculateBtnDisabled",
 			"isClearBtnDisabled",
 			"isInputValidationErr",
