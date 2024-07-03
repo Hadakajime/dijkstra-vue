@@ -1,3 +1,6 @@
+FYI
+The logic remaining within `src/utils` has not been touched other than setting the typedef source.
+
 # dijkstra-vue
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -33,12 +36,6 @@ yarn build
 ```
 
 ### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-yarn test:unit
-```
-    
-### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 yarn lint
